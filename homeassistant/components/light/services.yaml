@@ -1,0 +1,29 @@
+# Describes the format for available services
+
+turn_on:
+  description: Turn a light on or off
+
+  fields:
+    entity_id:
+      description: Name(s) of entities to turn on
+      example: \'light.kitchen\'
+
+    rgb_color:
+      description: Color for the light in RGB-format
+
+    xy_color:
+      description: Color for the light in XY-format
+
+    brightness:
+      description: Number between 0..255 indicating brightness
+      example: 120
+
+    flash:
+      values:
+        - short
+        - long
+
+    effect:
+      description: Light effect
+      values:
+        - colorloop

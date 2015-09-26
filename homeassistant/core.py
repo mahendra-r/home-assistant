@@ -526,6 +526,20 @@ class StateMachine(object):
 
 
 # pylint: disable=too-few-public-methods
+class Service(object):
+    """ Represents a service. """
+
+    __slots__ = ['func', 'fields']
+
+    def __init__(self, func, fields):
+        self.func = func
+        self.fields = fields or {}
+
+    def __call__(self, call):
+        self.func(call)
+
+
+# pylint: disable=too-few-public-methods
 class ServiceCall(object):
     """ Represents a call to a service. """
 
@@ -566,13 +580,18 @@ class ServiceRegistry(object):
         """ Returns True if specified service exists. """
         return service in self._services.get(domain, [])
 
-    def register(self, domain, service, service_func):
-        """ Register a service. """
+    def register(self, domain, service, service_func, fields=None):
+        """
+        Register a service.
+
+        Fields is a dictionary mapping field name to description
+        """
         with self._lock:
             if domain in self._services:
-                self._services[domain][service] = service_func
+                self._services[domain][service] = Service(service_func, fields)
             else:
-                self._services[domain] = {service: service_func}
+                self._services[domain] = {service: Service(service_func,
+                                                           fields)}
 
             self._bus.fire(
                 EVENT_SERVICE_REGISTERED,
